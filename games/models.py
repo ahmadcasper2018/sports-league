@@ -25,9 +25,8 @@ class Team(models.Model):
 
     def get_total_points(self, strategy):
         score = 0
-        if self.games_one:
-            for game in self.games_one.all():
-                score += strategy.process_scoring(game.score_one, game.score_two)
+        for game in self.games_one.all():
+            score += strategy.process_scoring(game.score_one, game.score_two)
         for game in self.games_two.all():
             score += strategy.process_scoring(game.score_two, game.score_one)
         return score
