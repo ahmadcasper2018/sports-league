@@ -2,15 +2,18 @@ language: python
 python:
   - "3.11"
 
-# Install dependencies
+services:
+  - docker
+
+before_install:
+  - docker-compose up -d --build
+  - docker-compose exec backend python manage.py migrate
+
 install:
-  - pip install -r requirements.txt
+  - docker-compose exec backend pip install -r requirements.txt
 
-# Run tests
 script:
-  - python manage.py test
+  - docker-compose exec backend python manage.py test
 
-# Define the branches to build
-branches:
-  only:
-    - develop
+after_script:
+  - docker-compose down
