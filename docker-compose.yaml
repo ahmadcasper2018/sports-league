@@ -3,7 +3,7 @@ version: '3'
 services:
   db:
     image: postgres:15
-    container_name: postgres_sports
+    container_name: postgres_sport
     env_file: .dockerenv
     volumes:
       - ./data/db:/var/lib/postgresql/data/
@@ -12,7 +12,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: backend_sports
     ports:
       - "8000:8000"
     volumes:
@@ -21,4 +20,17 @@ services:
       - db
     command: python manage.py runserver 0.0.0.0:8000
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: postgres_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    command: npm start
 
+
+volumes:
+  postgres_data:

@@ -1,4 +1,3 @@
-# Create your models here.
 from django.db import models
 
 
@@ -22,6 +21,19 @@ class Team(models.Model):
     @property
     def get_games_count(self):
         return self.games_one.count() + self.games_two.count()
+
+    def get_total_points(self, strategy):
+        score = 0
+        for game in self.games_one.all():
+            score += strategy.process_scoring(game.score_one, game.score_two)
+        for game in self.games_two.all():
+            score += strategy.process_scoring(game.score_two, game.score_one)
+        return score
+
+    @classmethod
+    def rank_teams(cls, rank_strategy, score_strategy):
+        teams = cls.objects.all()
+        return rank_strategy.process_ranking(teams, score_strategy)
 
     def __str__(self):
         return self.name

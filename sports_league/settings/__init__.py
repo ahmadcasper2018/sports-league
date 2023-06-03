@@ -14,4 +14,12 @@ elif env == "production":
 else:
     raise ValueError("Invalid environment specified.")
 
+
+# Optional local settings
+try:
+    from .local import *
+except ImportError:
+    pass
+
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myproject.settings")
