@@ -1,5 +1,5 @@
-from .base import *
+from .base import *  # noqa
 
 DEBUG = True
 
-THIRD_PARTY_APPS += ["django_extensions"]
+THIRD_PARTY_APPS += ["django_extensions"]  # noqa
