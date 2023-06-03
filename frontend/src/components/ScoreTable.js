@@ -12,10 +12,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import { TextField, Button } from "@mui/material";
 import FileUpload from "./FileUpload";
+import {useRecoilState} from "recoil";
+import {is_pushed as isPushedAtom} from "../atoms/authAtom";
 
 export default function ScoreTable() {
   const [data, setData] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
+  const [isPushed, setIsPushed] = useRecoilState(isPushedAtom);
   const [editFormData, setEditFormData] = useState({
     team_one: "",
     score_one: "",
@@ -52,6 +55,7 @@ export default function ScoreTable() {
       .then(() => {
         const updatedData = data.filter((row) => row.id !== id);
         setData(updatedData);
+        setIsPushed(true);
       })
       .catch((error) => console.log(error));
   };
@@ -73,18 +77,22 @@ export default function ScoreTable() {
     });
   };
 
-  const handleFileSelect = (formData) => {
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/game/upload-games-csv/`, {
-      method: "POST",
-      body: formData,
+const handleFileSelect = (formData) => {
+  fetch(`${process.env.REACT_APP_API_BASE_URL}/game/upload-games-csv/`, {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      console.log('Upload game');
+      setIsPushed(true);
     })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response data if needed
-        console.log(data);
-      })
-      .catch((error) => console.log(error));
-  };
+    .catch((error) => console.log(error));
+};
+
+
   const handleEditFormSubmit = (e, id) => {
     e.preventDefault();
 
@@ -105,6 +113,7 @@ export default function ScoreTable() {
           team_two: "",
           score_two: "",
         });
+        setIsPushed(true);
       })
       .catch((error) => console.log(error));
   };
@@ -140,6 +149,7 @@ export default function ScoreTable() {
           team_two: "",
           score_two: "",
         });
+        setIsPushed(true);
       })
       .catch((error) => console.log(error));
   };

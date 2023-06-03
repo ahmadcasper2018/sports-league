@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { is_pushed as isPushedAtom } from '../atoms/authAtom';
 import {
   Table,
   TableBody,
@@ -19,14 +21,17 @@ export default function RankTable() {
   const [rankStrategies, setRankStrategies] = useState([]);
   const [selectedScoreStrategy, setSelectedScoreStrategy] = useState("");
   const [selectedRankStrategy, setSelectedRankStrategy] = useState("");
+  const [isPushed, setIsPushed] = useRecoilState(isPushedAtom);
 
   useEffect(() => {
     const fetchGameRankData = async () => {
       try {
+        // Fetch rank data
         const rankResponse = await fetch("http://127.0.0.1:8000/game/rank/");
         const rankData = await rankResponse.json();
         setData(rankData);
 
+        // Fetch score strategies
         const scoreStrategiesResponse = await fetch(
           "http://127.0.0.1:8000/game/score-strategies/"
         );
@@ -35,6 +40,7 @@ export default function RankTable() {
           scoreStrategiesData.strategies.map((strategy) => strategy)
         );
 
+        // Fetch rank strategies
         const rankStrategiesResponse = await fetch(
           "http://127.0.0.1:8000/game/rank-strategies/"
         );
@@ -48,7 +54,7 @@ export default function RankTable() {
     };
 
     fetchGameRankData();
-  }, []);
+  }, [isPushed]); // Trigger the effect when isPushed changes
 
   useEffect(() => {
     const fetchRankTableData = async () => {
@@ -73,6 +79,12 @@ export default function RankTable() {
   const handleRankStrategyChange = (event) => {
     setSelectedRankStrategy(event.target.value);
   };
+
+  useEffect(() => {
+    if (isPushed) {
+      setIsPushed(false); // Reset is_pushed to false after re-render
+    }
+  }, [isPushed, setIsPushed]);
 
   return (
     <>
