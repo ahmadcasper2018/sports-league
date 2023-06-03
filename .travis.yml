@@ -1,0 +1,16 @@
+language: python
+python:
+  - "3.11"
+
+# Install dependencies
+install:
+  - pip install -r requirements.txt
+
+# Run tests
+script:
+  - python manage.py test
+
+# Define the branches to build
+branches:
+  only:
+    - develop
