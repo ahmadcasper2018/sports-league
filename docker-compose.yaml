@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_sports
+    env_file: .dockerenv
+    volumes:
+      - ./data/db:/var/lib/postgresql/data/
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend_sports
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    command: python manage.py runserver 0.0.0.0:8000
+
+
