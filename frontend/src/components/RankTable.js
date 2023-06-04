@@ -46,7 +46,7 @@ export default function RankTable() {
     const fetchGameRankData = async () => {
       try {
         // Fetch rank data
-        const rankResponse = await fetch("http://127.0.0.1:8000/game/rank/",{ headers: {
+        const rankResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/game/rank/`,{ headers: {
           Authorization: `Bearer ${token}`,
         }});
         checkStatus(rankResponse);
@@ -55,7 +55,7 @@ export default function RankTable() {
 
         // Fetch score strategies
         const scoreStrategiesResponse = await fetch(
-          "http://127.0.0.1:8000/game/score-strategies/",{ headers: {
+          `${process.env.REACT_APP_API_BASE_URL}/game/score-strategies/`,{ headers: {
           Authorization: `Bearer ${token}`,
         }}
         );
@@ -68,7 +68,7 @@ export default function RankTable() {
 
         // Fetch rank strategies
         const rankStrategiesResponse = await fetch(
-          "http://127.0.0.1:8000/game/rank-strategies/",{ headers: {
+          `${process.env.REACT_APP_API_BASE_URL}/game/rank-strategies/`,{ headers: {
           Authorization: `Bearer ${token}`,
         }}
         );
@@ -88,7 +88,7 @@ export default function RankTable() {
   useEffect(() => {
     const fetchRankTableData = async () => {
       try {
-        const url = `http://127.0.0.1:8000/game/rank/?score_strategy=${selectedScoreStrategy}`;
+        const url = `${process.env.REACT_APP_API_BASE_URL}/game/rank/?score_strategy=${selectedScoreStrategy}&rank_strategy=${selectedRankStrategy}`;
         const response = await fetch(url,{ headers: {
           Authorization: `Bearer ${token}`,
         }});
@@ -110,7 +110,7 @@ export default function RankTable() {
   useEffect(() => {
     const fetchRankTableDataTwo = async () => {
       try {
-        const url = `http://127.0.0.1:8000/game/rank/?rank_strategy=${selectedRankStrategy}`;
+        const url = `${process.env.REACT_APP_API_BASE_URL}/game/rank/?rank_strategy=${selectedRankStrategy}&score_strategy=${selectedScoreStrategy}`;
         const response = await fetch(url,{ headers: {
           Authorization: `Bearer ${token}`,
         }});
@@ -155,7 +155,7 @@ export default function RankTable() {
               <TableRow>
                 <TableCell>Ranking</TableCell>
                 <TableCell>Team</TableCell>
-                <TableCell align="right">Total Score</TableCell>
+                <TableCell align="right">Points</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
