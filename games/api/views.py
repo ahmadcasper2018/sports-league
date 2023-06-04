@@ -36,11 +36,11 @@ class GameViewSet(ModelViewSet):
     def rank(self, request):
         active_score_strategies = get_available_strategies("score")
         active_rank_strategies = get_available_strategies("rank")
-        scoring_method = self.request.query_params.get(
-            "score_strategy", "DefaultScoreStrategy"
+        scoring_method = (
+            self.request.query_params.get("score_strategy") or "DefaultScoreStrategy"
         )
-        rank_method = self.request.query_params.get(
-            "rank_strategy", "DefaultRankStrategy"
+        rank_method = (
+            self.request.query_params.get("rank_strategy") or "DefaultRankStrategy"
         )
         ranking_result = Team.rank_teams(
             rank_strategy=active_rank_strategies.get(rank_method)(),
