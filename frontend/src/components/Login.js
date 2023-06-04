@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [token, setToken] = useRecoilState(tokenState);
   const [loggedusername, setLoggedUserName] = useRecoilState(loggedUserNameState);
-  const [seassionState, setseassionState] = useRecoilState(xState);
+  const seassionState = useRecoilValue(xState);
 
   const navigate = useNavigate();
 

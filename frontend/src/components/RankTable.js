@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from "recoil";
 import { is_pushed as isPushedAtom } from '../atoms/authAtom';
 import { sessionState as xState } from '../atoms/authAtom';
 import {
@@ -34,7 +33,7 @@ export default function RankTable() {
   const checkStatus = (response) => {
     if (response.status === 401) {
         localStorage.removeItem("token");
-        setSessionState("expired");
+        setSessionState(false);
         navigate('/login');
 
       }
