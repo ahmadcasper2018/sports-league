@@ -1,15 +1,24 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { tokenState } from "../atoms/authAtom";
+import { sessionState as xState } from "../atoms/authAtom";
+import { loggedUserNameState } from "../atoms/authAtom";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CustomAlert from './CustomAlert';
+
+
+
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useRecoilState(tokenState);
+  const [loggedusername, setLoggedUserName] = useRecoilState(loggedUserNameState);
+  const [seassionState, setseassionState] = useRecoilState(xState);
 
   const navigate = useNavigate();
 
@@ -29,10 +38,17 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
+        // Store the token in the local storage
+        localStorage.setItem("token", data.access);
+        setLoggedUserName(data.username);
+        console.log(data.username)
+
         setToken(data.access);
         navigate("/home");
         toast.success("Login successful!", { autoClose: 5000 });
+
       } else {
+        console.log(data)
         toast.error(data.detail || "Login failed", { autoClose: 5000 });
       }
     } catch (error) {
@@ -50,6 +66,18 @@ export default function LoginPage() {
   };
 
   return (
+  <>
+    {!seassionState && <div style={{
+  backgroundColor: '#f2f2f2',
+  padding: '10px',
+  borderRadius: '5px',
+  textAlign: 'center',
+  fontSize: '36px',
+  fontWeight: 'bold',
+  color: 'red'
+}}>
+  Your session has expired. Please login again...
+</div>}
     <Box
       display="flex"
       justifyContent="center"
@@ -90,5 +118,8 @@ export default function LoginPage() {
         hideProgressBar={true}
       />
     </Box>
+
+
+</>
   );
 }

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
+import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from "recoil";
 import { is_pushed as isPushedAtom } from '../atoms/authAtom';
+import { sessionState as xState } from '../atoms/authAtom';
 import {
   Table,
   TableBody,
@@ -15,26 +18,48 @@ import {
   MenuItem,
 } from "@mui/material";
 
+
+
+
 export default function RankTable() {
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
   const [scoreStrategies, setScoreStrategies] = useState([]);
   const [rankStrategies, setRankStrategies] = useState([]);
   const [selectedScoreStrategy, setSelectedScoreStrategy] = useState("");
   const [selectedRankStrategy, setSelectedRankStrategy] = useState("");
   const [isPushed, setIsPushed] = useRecoilState(isPushedAtom);
+  const [xstate, setSessionState] = useRecoilState(xState);
+  const token = localStorage.getItem("token")
+  const checkStatus = (response) => {
+    if (response.status === 401) {
+        localStorage.removeItem("token");
+        setSessionState("expired");
+        navigate('/login');
+
+      }
+  }
+
 
   useEffect(() => {
     const fetchGameRankData = async () => {
       try {
         // Fetch rank data
-        const rankResponse = await fetch("http://127.0.0.1:8000/game/rank/");
+        const rankResponse = await fetch("http://127.0.0.1:8000/game/rank/",{ headers: {
+          Authorization: `Bearer ${token}`,
+        }});
+        checkStatus(rankResponse);
         const rankData = await rankResponse.json();
         setData(rankData);
 
         // Fetch score strategies
         const scoreStrategiesResponse = await fetch(
-          "http://127.0.0.1:8000/game/score-strategies/"
+          "http://127.0.0.1:8000/game/score-strategies/",{ headers: {
+          Authorization: `Bearer ${token}`,
+        }}
         );
+
+        checkStatus(scoreStrategiesResponse);
         const scoreStrategiesData = await scoreStrategiesResponse.json();
         setScoreStrategies(
           scoreStrategiesData.strategies.map((strategy) => strategy)
@@ -42,8 +67,11 @@ export default function RankTable() {
 
         // Fetch rank strategies
         const rankStrategiesResponse = await fetch(
-          "http://127.0.0.1:8000/game/rank-strategies/"
+          "http://127.0.0.1:8000/game/rank-strategies/",{ headers: {
+          Authorization: `Bearer ${token}`,
+        }}
         );
+        checkStatus(rankStrategiesResponse);
         const rankStrategiesData = await rankStrategiesResponse.json();
         setRankStrategies(
           rankStrategiesData.strategies.map((strategy) => strategy)
@@ -60,7 +88,10 @@ export default function RankTable() {
     const fetchRankTableData = async () => {
       try {
         const url = `http://127.0.0.1:8000/game/rank/?score_strategy=${selectedScoreStrategy}`;
-        const response = await fetch(url);
+        const response = await fetch(url,{ headers: {
+          Authorization: `Bearer ${token}`,
+        }});
+        checkStatus(response);
         const data = await response.json();
         setData(data);
       } catch (error) {

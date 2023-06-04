@@ -3,6 +3,7 @@ import csv
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -14,6 +15,7 @@ from games.strategies_tracker import get_available_strategies
 class GameViewSet(ModelViewSet):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
+    permission_classes = (IsAuthenticated,)
 
     @action(methods=["post"], detail=False, url_path="upload-games-csv")
     def upload_games_csv(self, request):
