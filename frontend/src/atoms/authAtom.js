@@ -14,7 +14,7 @@ export const loggedUserNameState = atom({
 
 export const sessionState = atom({
   key: "sessionState",
-  default: "working",
+  default: true,
 });
 
 

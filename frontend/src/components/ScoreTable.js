@@ -27,7 +27,7 @@ export default function ScoreTable() {
 const checkStatus = (response) => {
     if (response.status === 401) {
         localStorage.removeItem("token");
-        setSessionState("expired");
+        setSessionState(false);
         navigate('/login');
 
       }
