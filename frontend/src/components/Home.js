@@ -6,14 +6,15 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import RankTable from "./RankTable";
 import ScoreTable from "./ScoreTable";
-import { useRecoilValue } from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import { loggedUserNameState } from "../atoms/authAtom";
-
+import { sessionState as xState } from '../atoms/authAtom';
 const Home = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [showRedirectMessage, setShowRedirectMessage] = useState(false);
   const username = useRecoilValue(loggedUserNameState)
+  const [sessionState, setSessionState] = useRecoilState(xState);
 
   useEffect(() => {
     // Check if the token is empty
@@ -34,7 +35,7 @@ const Home = () => {
   const handleLogout = () => {
     // Clear the token from local storage
     localStorage.removeItem("token");
-
+    setSessionState(true);
     // Redirect to the login page
     navigate('/login'); // Replace '/login' with the actual path to your login page
   };

@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import { useNavigate } from 'react-router-dom';
 import { is_pushed as isPushedAtom } from '../atoms/authAtom';
 import { sessionState as xState } from '../atoms/authAtom';
+
 import {
   Table,
   TableBody,
@@ -29,6 +30,7 @@ export default function RankTable() {
   const [selectedRankStrategy, setSelectedRankStrategy] = useState("");
   const [isPushed, setIsPushed] = useRecoilState(isPushedAtom);
   const [xstate, setSessionState] = useRecoilState(xState);
+
   const token = localStorage.getItem("token")
   const checkStatus = (response) => {
     if (response.status === 401) {
@@ -100,6 +102,30 @@ export default function RankTable() {
 
     fetchRankTableData();
   }, [selectedScoreStrategy]);
+
+
+
+
+
+  useEffect(() => {
+    const fetchRankTableDataTwo = async () => {
+      try {
+        const url = `http://127.0.0.1:8000/game/rank/?rank_strategy=${selectedRankStrategy}`;
+        const response = await fetch(url,{ headers: {
+          Authorization: `Bearer ${token}`,
+        }});
+        checkStatus(response);
+        const data = await response.json();
+        setData(data);
+      } catch (error) {
+        console.error("Error fetching rank table data:", error);
+      }
+    };
+
+    fetchRankTableDataTwo();
+  }, [selectedRankStrategy]);
+
+
 
   const handleScoreStrategyChange = (event) => {
     const selectedValue = event.target.value;
