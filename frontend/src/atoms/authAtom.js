@@ -19,6 +19,12 @@ export const sessionState = atom({
 
 
 
+export const uploadState = atom({
+  key: "uploadState",
+  default: false,
+});
+
+
 export const is_pushed = atom({
   key: "is_pushed",
   default: false, // Initial value is an empty string
