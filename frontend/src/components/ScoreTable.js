@@ -13,15 +13,19 @@ import AddIcon from "@mui/icons-material/Add";
 import { TextField, Button } from "@mui/material";
 import FileUpload from "./FileUpload";
 import {useRecoilState} from "recoil";
+import {useRecoilValue} from "recoil";
 import {is_pushed as isPushedAtom} from "../atoms/authAtom";
 import { useNavigate } from 'react-router-dom';
 import { sessionState as xState } from '../atoms/authAtom';
+import { uploadState as upload } from '../atoms/authAtom';
 
 export default function ScoreTable() {
   const [data, setData] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
   const [isPushed, setIsPushed] = useRecoilState(isPushedAtom);
   const [sessionState, setSessionState] = useRecoilState(xState);
+  const [xUploadState, setxUploadState] = useRecoilState(upload);
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token")
 const checkStatus = (response) => {
@@ -61,7 +65,7 @@ const checkStatus = (response) => {
       .then((response) => response.json())
       .then((data) => setData(data))
       .catch((error) => console.log(error));
-  }, []);
+  }, [xUploadState]);
 
   const fetchData = () => {
     fetch(`${process.env.REACT_APP_API_BASE_URL}/game/`,{
@@ -124,6 +128,7 @@ const handleFileSelect = (formData) => {
       }
       console.log('Upload game');
       setIsPushed(true);
+      setxUploadState(!xUploadState);
     })
     .catch((error) => console.log(error));
 };
