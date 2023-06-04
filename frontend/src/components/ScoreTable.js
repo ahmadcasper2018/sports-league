@@ -61,7 +61,7 @@ const checkStatus = (response) => {
       .then((response) => response.json())
       .then((data) => setData(data))
       .catch((error) => console.log(error));
-  }, [data]);
+  }, []);
 
   const fetchData = () => {
     fetch(`${process.env.REACT_APP_API_BASE_URL}/game/`,{

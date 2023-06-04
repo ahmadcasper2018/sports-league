@@ -15,8 +15,12 @@ RUN apt-get update \
 # Set the working directory inside the container
 WORKDIR /app
 
+COPY ./wait-for.sh /usr/bin
+COPY ./entrypoint.sh /usr/bin
 # Copy the entire project directory to the container
 COPY . .
 
 RUN pip install -r requirements.txt
+
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 
