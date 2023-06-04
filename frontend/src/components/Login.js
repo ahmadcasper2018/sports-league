@@ -40,14 +40,14 @@ export default function LoginPage() {
         // Store the token in the local storage
         localStorage.setItem("token", data.access);
         setLoggedUserName(data.username);
-        console.log(data.username)
+
 
         setToken(data.access);
-        navigate("/home");
+        navigate("/");
         toast.success("Login successful!", { autoClose: 5000 });
 
       } else {
-        console.log(data)
+
         toast.error(data.detail || "Login failed", { autoClose: 5000 });
       }
     } catch (error) {
