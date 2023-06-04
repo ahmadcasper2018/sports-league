@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Button } from "@mui/material";
-
+import {is_pushed as isPushedAtom} from "../atoms/authAtom";
+import {useRecoilState} from "recoil";
 const FileUpload = ({ onFileSelect }) => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isPushed, setIsPushed] = useRecoilState(isPushedAtom);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);

@@ -14,11 +14,27 @@ import { TextField, Button } from "@mui/material";
 import FileUpload from "./FileUpload";
 import {useRecoilState} from "recoil";
 import {is_pushed as isPushedAtom} from "../atoms/authAtom";
+import { useNavigate } from 'react-router-dom';
+import { sessionState as xState } from '../atoms/authAtom';
 
 export default function ScoreTable() {
   const [data, setData] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
   const [isPushed, setIsPushed] = useRecoilState(isPushedAtom);
+  const [sessionState, setSessionState] = useRecoilState(xState);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token")
+const checkStatus = (response) => {
+    if (response.status === 401) {
+        localStorage.removeItem("token");
+        setSessionState("expired");
+        navigate('/login');
+
+      }
+    else{
+      return response;
+    }
+}
   const [editFormData, setEditFormData] = useState({
     team_one: "",
     score_one: "",
@@ -35,14 +51,26 @@ export default function ScoreTable() {
 
   useEffect(() => {
     // Fetch data from the API
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/game/`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/game/`,{
+      method: "GET",
+       headers: {
+          Authorization: `Bearer ${token}`,
+        },
+    })
+      .then((response) => checkStatus(response))
       .then((response) => response.json())
       .then((data) => setData(data))
       .catch((error) => console.log(error));
   }, [data]);
 
   const fetchData = () => {
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/game/`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/game/`,{
+      method: "GET",
+      headers: {
+          Authorization: `Bearer ${token}`,
+        },
+    })
+         .then((response) => checkStatus(response))
       .then((response) => response.json())
       .then((data) => setData(data))
       .catch((error) => console.log(error));
@@ -51,7 +79,11 @@ export default function ScoreTable() {
   const handleDelete = (id) => {
     fetch(`${process.env.REACT_APP_API_BASE_URL}/game/${id}/`, {
       method: "DELETE",
+      headers: {
+          Authorization: `Bearer ${token}`,
+        },
     })
+         .then((response) => checkStatus(response))
       .then(() => {
         const updatedData = data.filter((row) => row.id !== id);
         setData(updatedData);
@@ -81,7 +113,11 @@ const handleFileSelect = (formData) => {
   fetch(`${process.env.REACT_APP_API_BASE_URL}/game/upload-games-csv/`, {
     method: "POST",
     body: formData,
+    headers: {
+          Authorization: `Bearer ${token}`,
+        },
   })
+       .then((response) => checkStatus(response))
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -98,11 +134,14 @@ const handleFileSelect = (formData) => {
 
     fetch(`${process.env.REACT_APP_API_BASE_URL}/game/${id}/`, {
       method: "PUT",
+       Authorization: `Bearer ${token}`,
       headers: {
         "Content-Type": "application/json",
+         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(editFormData),
     })
+         .then((response) => checkStatus(response))
       .then((response) => response.json())
       .then(() => {
         fetchData();
@@ -134,11 +173,14 @@ const handleFileSelect = (formData) => {
 
     fetch(`${process.env.REACT_APP_API_BASE_URL}/game/`, {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json",
+         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(addFormData),
     })
+         .then((response) => checkStatus(response))
       .then((response) => response.json())
       .then(() => {
         fetchData();
@@ -311,7 +353,7 @@ const handleFileSelect = (formData) => {
         </TableContainer>
       </div>
 
-      <div>
+     <div style={{ paddingTop: '5%', paddingBottom: '5%' }}>
         <FileUpload onFileSelect={handleFileSelect} />
       </div>
     </>

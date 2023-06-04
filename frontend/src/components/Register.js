@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [password_confirmation, setPasswordConfirmation] = useState("");
   const setToken = useSetRecoilState(tokenState);
   const navigate = useNavigate();
 
@@ -22,6 +23,8 @@ export default function Register() {
         body: JSON.stringify({
           username,
           password,
+          password_confirmation,
+
         }),
       });
 
@@ -48,6 +51,10 @@ export default function Register() {
     setPassword(e.target.value);
   };
 
+  const handlePassword2Change = (e) => {
+    setPasswordConfirmation(e.target.value);
+  };
+
   return (
     <Box
       display="flex"
@@ -68,6 +75,14 @@ export default function Register() {
           type="password"
           value={password}
           onChange={handlePasswordChange}
+          fullWidth
+          margin="normal"
+        />
+          <TextField
+          label="Password Confirmation"
+          type="password"
+          value={password_confirmation}
+          onChange={handlePassword2Change}
           fullWidth
           margin="normal"
         />
