@@ -1,5 +1,6 @@
-from account.api.views import UserViewSet
 from rest_framework.routers import SimpleRouter
+
+from accounts.api.views import UserViewSet
 
 router = SimpleRouter()
 
