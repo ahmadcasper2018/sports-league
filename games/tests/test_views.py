@@ -1,16 +1,25 @@
 import os
 
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APIClient, APITestCase
+from rest_framework_simplejwt.tokens import AccessToken
 
 from games.api.serializers import GameSerializer
 from games.models import Game, Team
+
+User = get_user_model()
 
 
 class GameRecordsUploadTestCase(APITestCase):
     def test_upload_games_csv(self):
         # Create a test CSV file
+        self.user = User.objects.create(username="user", password="password")
+        self.client = APIClient()
+        self.token = AccessToken.for_user(self.user)
+        self.auth_header = "Bearer {}".format(self.token)
+        self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
 
         csv_data = "Team AA,3,Team BB,1\n"
         csv_data += "Team CC,2,Team DD,2\n"
@@ -24,8 +33,8 @@ class GameRecordsUploadTestCase(APITestCase):
         team_c = Team.objects.create(name="Team CC")
         team_d = Team.objects.create(name="Team DD")
 
-        url = f"{reverse('game-list')}upload_games_csv/"
-        print(url)
+        url = f"{reverse('game-list')}upload-games-csv/"
+
         with open("test.csv", "rb") as file:
             data = {"csv_file": file}
             response = self.client.post(url, data, format="multipart")
@@ -50,6 +59,7 @@ class GameRecordsUploadTestCase(APITestCase):
 
 class GameAPITest(APITestCase):
     def setUp(self):
+        self.user = User.objects.create(username="user", password="password")
         self.team_a = Team.objects.create(name="Team A")
         self.team_b = Team.objects.create(name="Team B")
 
@@ -59,6 +69,10 @@ class GameAPITest(APITestCase):
         self.game2 = Game.objects.create(
             team_one=self.team_b, score_one=2, team_two=self.team_a, score_two=2
         )
+        self.client = APIClient()
+        self.token = AccessToken.for_user(self.user)
+        self.auth_header = "Bearer {}".format(self.token)
+        self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
 
     def test_create_game(self):
         url = reverse("game-list")
