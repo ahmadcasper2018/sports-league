@@ -17,6 +17,7 @@ WORKDIR /app
 
 COPY ./wait-for.sh /usr/bin
 COPY ./entrypoint.sh /usr/bin
+RUN chmod +x /usr/bin/entrypoint.sh
 # Copy the entire project directory to the container
 COPY . .
 
